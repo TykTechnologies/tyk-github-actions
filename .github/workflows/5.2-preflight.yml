@@ -40,7 +40,7 @@ jobs:
         run: git config --global url."https://${TOKEN}@github.com".insteadOf "https://github.com"
 
       - name: "Checkout repository"
-        uses: ./.github/actions/checkout@main
+        uses: TykTechnologies/tyk-github-actions/.github/actions/checkout@main
 
       - name: "Setup Go"
         uses: actions/setup-go@v2
