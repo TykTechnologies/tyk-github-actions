@@ -1,0 +1,31 @@
+---
+version: "3"
+
+tasks:
+  default:
+    desc: Local test actions
+    deps:
+      - install:shellcheck
+      - install:actionlint
+    cmds:
+      - task: lint
+
+  lint:
+    desc: Lint actions
+    cmds:
+      - actionlint -ignore SC2086 -verbose
+      - yamllint .
+
+  install:actionlint:
+    desc: Install actionlint
+    status:
+      - type actionlint
+    cmds:
+      - go install github.com/rhysd/actionlint/cmd/actionlint@latest
+
+  install:shellcheck:
+    desc: Install shellcheck
+    status:
+      - type shellcheck
+    cmds:
+      - apt install shellcheck
