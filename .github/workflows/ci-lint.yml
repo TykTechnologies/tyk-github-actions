@@ -17,6 +17,11 @@ concurrency:
   group: ${{ github.head_ref || github.run_id }}-task-lint
   cancel-in-progress: true
 
+# Set the default install path for `go install`.
+
+env:
+  GOBIN: /usr/local/bin
+
 jobs:
   tools-latest:
     name: 'Lint tyk-github-actions repo'
