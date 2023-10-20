@@ -1,0 +1,19 @@
+---
+version: "3"
+
+vars:
+  platform: '{{.BUILD_PLATFORM | default "linux/amd64"}}'
+
+env:
+  DOCKER_BUILDKIT: 1
+  BUILDX_EXPERIMENTAL: 1
+
+tasks:
+  default:
+    desc: "Build docker images"
+    vars:
+      tags: latest
+      args: --rm --platform {{.platform}}
+    cmds:
+      - for: { var: tags, as: tag }
+        cmd: docker build -t internal/tools:{{.tag}} -f {{.tag}}/Dockerfile {{.tag}}/
