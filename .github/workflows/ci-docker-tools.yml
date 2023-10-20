@@ -10,9 +10,11 @@ on:  # yamllint disable-line rule:truthy
   pull_request:
     paths:
       - 'docker/tools/**'
+      - '.github/workflows/ci-docker-tools.yml'
   push:
     paths:
       - 'docker/tools/**'
+      - '.github/workflows/ci-docker-tools.yml'
     branches:
       - 'main'
   schedule:
@@ -23,12 +25,14 @@ on:  # yamllint disable-line rule:truthy
 # branch will continue to run.
 
 concurrency:
-  group: ${{ github.head_ref || github.run_id }}
+  group: ${{ github.head_ref || github.run_id }}-docker-tools
   cancel-in-progress: true
 
 jobs:
   tools-latest:
     name: 'Build tykio/ci-tools:${{ matrix.tag }}'
+    permissions:
+      id-token: write
     strategy:
       fail-fast: false
       matrix:
