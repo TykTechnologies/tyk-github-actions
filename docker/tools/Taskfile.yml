@@ -1,3 +1,4 @@
+# yamllint disable rule:line-length
 ---
 version: "3"
 
@@ -15,5 +16,7 @@ tasks:
       tags: latest
       args: --rm --platform {{.platform}}
     cmds:
-      - for: { var: tags, as: tag }
+      - for:
+          var: tags
+          as: tag
         cmd: docker build -t internal/tools:{{.tag}} -f {{.tag}}/Dockerfile {{.tag}}/
