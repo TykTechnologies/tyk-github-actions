@@ -5,6 +5,9 @@ name: Docker - CI tooling for GitHub Actions
 # is modified, and on a weekly schedule to get updates.
 
 on:
+  pull_request:
+    paths:
+      - 'docker/tools/**'
   push:
     paths:
       - 'docker/tools/**'
@@ -12,7 +15,14 @@ on:
       - 'master'
   schedule:
     - cron: '0 0 * * 1' # Run every Monday at 12:00 AM UTC
-  pull_request:
+
+# Make sure to cancel previous job runs in case a PR
+# gets new commits. Changes being merged to the main
+# branch will continue to run.
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   tools-latest:
