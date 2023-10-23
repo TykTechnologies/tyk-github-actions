@@ -38,14 +38,8 @@ echo "Building go plugin"
 go build -race -o ./test/goplugins/goplugins.so -buildmode=plugin ./test/goplugins
 
 for pkg in ${packages}; do
-    # local package reference
-    pkg=${pkg/github.com\/TykTechnologies\/tyk/.}
-    echo "# ${pkg}"
-
     # sanitize coverage output file
-    coveragefile=${pkg/.\//}
-    coveragefile=${coveragefile//\//-} # `echo $coveragefile | sed -e 's/\//-/g'`
+    coveragefile=${pkg//\//-}
 
-    echo go test ${OPTS} -timeout ${TEST_TIMEOUT} -coverprofile=${coveragefile}.cov ./${pkg}
     gotestsum --rerun-fails=3 --raw-command go test ${OPTS} -json -timeout ${TEST_TIMEOUT} -coverprofile=${coveragefile}.cov -cover ./${pkg}
 done
