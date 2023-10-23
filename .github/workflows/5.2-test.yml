@@ -19,13 +19,13 @@ on:  # yamllint disable-line rule:truthy
     inputs:
       go-version:
         type: string
-        default: '1.19.x'
+        default: "1.19.x"
       redis-version:
         type: string
-        default: '6'
+        default: "6"
       python-version:
         type: string
-        default: '3.9'
+        default: "3.9"
 
 env:
   # Declare GOPRIVATE to enable fetching private repo packages.
@@ -50,7 +50,7 @@ jobs:
         with:
           go-version: ${{ inputs.go-version }}
 
-      - name: Setup Python
+      - name: "Setup Python"
         uses: actions/setup-python@v4
         with:
             python-version: ${{ inputs.python-version }}
@@ -78,5 +78,5 @@ jobs:
       - name: "Run tests"
         uses: TykTechnologies/tyk-github-actions/.github/actions/gotestsum@main
         with:
-          tags: 'goplugin'
-          args: '-race -count=1'
+          tags: "goplugin"
+          args: "-race -count=1"
