@@ -44,3 +44,4 @@ COPY --from=docker /usr/local/bin/docker /usr/local/bin/
 COPY --from=docker /usr/local/bin/docker-compose /usr/local/bin/
 
 RUN docker compose version
+RUN go version
