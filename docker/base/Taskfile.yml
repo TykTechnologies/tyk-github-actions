@@ -4,6 +4,7 @@ version: "3"
 
 vars:
   image: internal/ci-base
+  tags: latest 5.2 5.0
   platform: '{{.BUILD_PLATFORM | default "linux/amd64"}}'
 
 env:
@@ -14,7 +15,6 @@ tasks:
   default:
     desc: "Build docker images"
     vars:
-      tags: latest 5.0
       args: --rm --platform {{.platform}} --progress=plain --no-cache --pull
     cmds:
       - for:
