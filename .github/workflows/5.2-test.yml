@@ -61,3 +61,6 @@ jobs:
 
       - name: "Run tests"
         uses: TykTechnologies/tyk-github-actions/.github/actions/gotestsum@main
+        with:
+          tags: 'goplugin'
+          args: '-race -count=1'
