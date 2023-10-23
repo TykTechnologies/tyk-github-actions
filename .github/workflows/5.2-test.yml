@@ -79,6 +79,7 @@ jobs:
         uses: TykTechnologies/tyk-github-actions/.github/actions/gotestsum@main
         env:
           PYTHON_VERSION: ${{ inputs.python-version }}
+          PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION: python
         with:
           tags: "goplugin"
           args: "-race -count=1"
