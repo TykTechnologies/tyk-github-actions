@@ -37,6 +37,7 @@ runs:
         go test -tags=${{ inputs.tags }} ${{ inputs.args }} -json -timeout 15m -coverprofile=coverage-report.cov ./...
 
     - name: 'Run gotestsum on each package'
+      shell: 'bash'
       if: ${{ inputs.loop == 'yes' }}
       run: |
         PKGS="$(go list ./...)"
