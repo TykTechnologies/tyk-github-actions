@@ -75,6 +75,10 @@ jobs:
           pip install google
           pip install protobuf
 
+      - name: "Build test plugin"
+        run: |
+          go build -race -o ./test/goplugins/goplugins.so -buildmode=plugin ./test/goplugins
+
       - name: "Run tests"
         uses: TykTechnologies/tyk-github-actions/.github/actions/gotestsum@main
         env:
