@@ -1,20 +1,20 @@
 # yamllint disable rule:line-length
 ---
-name: Docker - CI tools image
+name: Docker - CI base image
 
-# This workflow builds the CI tooling from docker/tools/
+# This workflow builds the CI base image from docker/base/
 # within this repository. It runs whenever a file inside
 # is modified, and on a weekly schedule to get updates.
 
 on:  # yamllint disable-line rule:truthy
   pull_request:
     paths:
-      - 'docker/tools/**'
-      - '.github/workflows/ci-docker-tools.yml'
+      - 'docker/base/**'
+      - '.github/workflows/ci-docker-base.yml'
   push:
     paths:
-      - 'docker/tools/**'
-      - '.github/workflows/ci-docker-tools.yml'
+      - 'docker/base/**'
+      - '.github/workflows/ci-docker-base.yml'
     branches:
       - 'main'
   schedule:
@@ -25,12 +25,12 @@ on:  # yamllint disable-line rule:truthy
 # branch will continue to run.
 
 concurrency:
-  group: ${{ github.head_ref || github.run_id }}-docker-tools
+  group: ${{ github.head_ref || github.run_id }}-docker-base
   cancel-in-progress: true
 
 jobs:
-  tools-latest:
-    name: 'Build tykio/ci-tools:${{ matrix.tag }}'
+  base-latest:
+    name: 'Build tykio/ci-base:${{ matrix.tag }}'
     permissions:
       id-token: write
     strategy:
@@ -38,6 +38,8 @@ jobs:
       matrix:
         tag:
           - 'latest'
+          - '5.2'
+          - '5.0'
 
     runs-on: ubuntu-latest
 
@@ -49,12 +51,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: 'Build tykio/ci-tools:latest'
+      - name: 'Build tykio/ci-base:latest'
         uses: docker/build-push-action@v4
         with:
           push: ${{ github.ref_name == 'main' }}
           pull: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          context: docker/tools/latest
-          tags: tykio/ci-tools:latest
+          context: docker/base/latest
+          tags: tykio/ci-base:latest
