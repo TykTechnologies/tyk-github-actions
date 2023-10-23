@@ -40,9 +40,10 @@ runs:
       shell: 'bash'
       if: ${{ inputs.loop == 'yes' }}
       run: |
-        PKGS="$(go list ./...)"
-        for pkg in ${PKGS}; do
-            coveragefile=`echo "$pkg" | sed -e 's/\//-/g'`
+        package=$(go list .)
+        packages=$(go list ./... | tail -n +2 | sed -e "s|$package/||g")
+        for pkg in ${packages}; do
+            coveragefile=${pkg//\//-}
             gotestsum --junitfile ${coveragefile}.xml --rerun-fails=3 --raw-command \
-            go test -tags=${{ inputs.tags }} ${{ inputs.args }} -json -timeout 15m -coverprofile=${coveragefile}.cov ${pkg}
+            go test -tags=${{ inputs.tags }} ${{ inputs.args }} -json -timeout 15m -coverprofile=${coveragefile}.cov ./${pkg}
         done
