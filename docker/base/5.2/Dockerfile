@@ -1,5 +1,5 @@
 # The base image, overridable with arguments
-ARG BASE_IMAGE=golang:1.19
+ARG BASE_IMAGE=golang:1.19-bullseye
 
 # Install docker from docker image
 FROM docker:24-cli AS docker
@@ -18,12 +18,15 @@ RUN apt -qq update && \
     apt -qqy install \
         curl \
         wget \
+        cython3 \
+        pip \
         python3 \
         python3-dev \
         python3-pip \
         python3-venv \
         python3-setuptools \
         python3-grpcio \
+        python3-grpc-tools \
         python3-protobuf \
         build-essential \
         zlib1g-dev \
@@ -45,3 +48,4 @@ COPY --from=docker /usr/local/bin/docker-compose /usr/local/bin/
 
 RUN docker compose version
 RUN go version
+RUN python3 -V

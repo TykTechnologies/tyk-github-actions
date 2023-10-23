@@ -21,3 +21,26 @@ tasks:
           var: tags
           as: tag
         cmd: docker build {{.args}} -t {{.image}}:{{.tag}} -f {{.tag}}/Dockerfile {{.tag}}/
+
+  enter:
+    desc: "Run container shell"
+    vars:
+      tag: latest
+    cmds:
+      - docker run --rm -it {{.image}}:{{.tag}}
+
+  info:
+    desc: "Print image info"
+    cmds:
+      - for:
+          var: tags
+          as: tag
+        cmd: |
+          docker run --rm {{.image}}:{{.tag}} python3 -V
+          docker run --rm {{.image}}:{{.tag}} go version
+
+  diff:
+    desc: "Print image diffs"
+    cmds:
+      - diff -uHr 5.0 5.2 || true
+      - diff -uHr 5.2 latest || true

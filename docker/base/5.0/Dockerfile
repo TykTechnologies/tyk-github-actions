@@ -18,6 +18,7 @@ RUN apt -qq update && \
     apt -qqy install \
         curl \
         wget \
+        cython3 \
         python3 \
         python3-dev \
         python3-pip \
@@ -45,3 +46,4 @@ COPY --from=docker /usr/local/bin/docker-compose /usr/local/bin/
 
 RUN docker compose version
 RUN go version
+RUN python3 -V
