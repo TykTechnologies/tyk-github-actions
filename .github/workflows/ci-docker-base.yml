@@ -1,6 +1,6 @@
 # yamllint disable rule:line-length
 ---
-name: Docker - CI base image for GitHub Actions
+name: Docker - CI base image
 
 # This workflow builds the CI base image from docker/base/
 # within this repository. It runs whenever a file inside
