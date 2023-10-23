@@ -1,0 +1,49 @@
+---
+version: "3"
+
+vars:
+  tag: 5.0
+  python: "3.9"
+  branch: release-5-lts
+  image: internal/ci-base:{{ .tag }}
+
+tasks:
+  default:
+    desc: "Run the full test suite"
+    cmds:
+      - task: info
+      - task: clean
+      - task: clone
+      - task: test
+
+  test:
+    desc: "Clone gateway and run tests with ci-base"
+    dir: .
+    cmds:
+      - docker run --net=host --name redis -d redis:6
+      - |
+        docker run -t --net=host --name ci-test-gateway \
+        -e CI=true \
+        -e TYK_DB_REDISHOST=localhost \
+        -e TYK_GW_STORAGE_HOST=localhost \
+        -e PYTHON_VERSION={{ .python }} \
+        -e PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
+        --rm -v $PWD/tyk:/tyk -w /tyk {{ .image }} ./bin/ci-tests.sh
+
+  clone:
+    desc: "Clone tyk repo"
+    cmds:
+      - rm -rf tyk && git clone --depth=1 --branch={{ .branch }} git@github.com:TykTechnologies/tyk.git
+      - cp -f ci-tests-lts.sh ./tyk/bin/ci-tests.sh
+
+  clean:
+    desc: "Clean temporary assets/services"
+    cmds:
+      - docker rm -f redis ci-test-gateway
+      - rm -rf tyk
+
+  info:
+    desc: "Print info for base image"
+    cmds:
+      - docker run -it --rm {{ .image }} python3 -V
+      - docker run -it --rm {{ .image }} go version
