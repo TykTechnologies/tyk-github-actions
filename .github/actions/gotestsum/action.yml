@@ -18,6 +18,10 @@ inputs:
   args:
     defaults: ''
 
+  # Loop through the packages
+  loop:
+    default: 'yes'
+
 runs:
   using: "composite"
   steps:
@@ -25,8 +29,19 @@ runs:
       shell: 'bash'
       run: go install gotest.tools/gotestsum@latest
 
-    - name: 'Run gotestsum'
+    - name: 'Run gotestsum on all packages'
       shell: 'bash'
+      if: ${{ inputs.loop != 'yes' }}
       run: |
         gotestsum --junitfile coverage-report.xml --rerun-fails=3 --raw-command \
         go test -tags=${{ inputs.tags }} ${{ inputs.args }} -json -timeout 15m -coverprofile=coverage-report.cov ./...
+
+    - name: 'Run gotestsum on each package'
+      if: ${{ inputs.loop == 'yes' }}
+      run: |
+        PKGS="$(go list ./...)"
+        for pkg in ${PKGS}; do
+            coveragefile=`echo "$pkg" | sed -e 's/\//-/g'`
+            gotestsum --junitfile ${coveragefile}.xml --rerun-fails=3 --raw-command \
+            go test -tags=${{ inputs.tags }} ${{ inputs.args }} -json -timeout 15m -coverprofile=${coveragefile}.cov ${pkg}
+        done
