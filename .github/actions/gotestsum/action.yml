@@ -27,5 +27,6 @@ runs:
 
     - name: 'Run gotestsum'
       shell: 'bash'
-      run: gotestsum --junitfile coverage-report.xml --rerun-fails=3 --raw-command \
-           go test -tags=${{ inputs.tags }} ${{ inputs.args }} -json -timeout 15m -coverprofile=coverage-report.cov ./...
+      run: |
+        gotestsum --junitfile coverage-report.xml --rerun-fails=3 --raw-command \
+        go test -tags=${{ inputs.tags }} ${{ inputs.args }} -json -timeout 15m -coverprofile=coverage-report.cov ./...
