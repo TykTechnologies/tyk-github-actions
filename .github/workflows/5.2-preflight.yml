@@ -30,7 +30,7 @@ env:
 
 jobs:
   preflight:
-    name: "POC: Go ${{ inputs.go-version }} Redis ${{ inputs.redis-version }}"
+    name: "Preflight: Go ${{ inputs.go-version }} Redis ${{ inputs.redis-version }}"
     runs-on: ubuntu-latest
 
     steps:
