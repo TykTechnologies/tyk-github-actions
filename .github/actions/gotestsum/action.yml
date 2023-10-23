@@ -22,8 +22,10 @@ runs:
   using: "composite"
   steps:
     - name: 'Install gotestsum'
+      shell: 'bash'
       run: go install gotest.tools/gotestsum@latest
 
     - name: 'Run gotestsum'
+      shell: 'bash'
       run: gotestsum --junitfile coverage-report.xml --rerun-fails=3 --raw-command \
            go test -tags=${{ inputs.tags }} ${{ inputs.args }} -json -timeout 15m -coverprofile=coverage-report.cov ./...
