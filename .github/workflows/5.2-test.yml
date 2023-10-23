@@ -77,6 +77,8 @@ jobs:
 
       - name: "Run tests"
         uses: TykTechnologies/tyk-github-actions/.github/actions/gotestsum@main
+        env:
+          PYTHON_VERSION: ${{ inputs.python-version }}
         with:
           tags: "goplugin"
           args: "-race -count=1"
