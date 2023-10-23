@@ -19,10 +19,13 @@ on:  # yamllint disable-line rule:truthy
     inputs:
       go-version:
         type: string
-        default: "1.19.x"
+        default: '1.19.x'
       redis-version:
         type: string
-        default: "6"
+        default: '6'
+      python-version:
+        type: string
+        default: '3.9'
 
 env:
   # Declare GOPRIVATE to enable fetching private repo packages.
@@ -47,6 +50,11 @@ jobs:
         with:
           go-version: ${{ inputs.go-version }}
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+            python-version: ${{ inputs.python-version }}
+
       - name: "Start Redis"
         uses: supercharge/redis-github-action@1.1.0
         with:
@@ -58,6 +66,14 @@ jobs:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: ${{ runner.os }}-go-
+
+      - name: "Install base dependencies"
+        run: |
+          sudo apt-get install libluajit-5.1-dev
+          python -m pip install --upgrade pip
+          pip install setuptools
+          pip install google
+          pip install protobuf
 
       - name: "Run tests"
         uses: TykTechnologies/tyk-github-actions/.github/actions/gotestsum@main
