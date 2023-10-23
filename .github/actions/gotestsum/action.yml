@@ -1,0 +1,29 @@
+# yamllint disable rule:line-length
+---
+
+name: 'Run gotestsum'
+
+description: >-
+  Run gotestsum with retry options against all packages
+
+inputs:
+  jobname:
+    default: ${{ github.job }}
+
+  # Tags to include (csv)
+  tags:
+    default: ''
+
+  # Arguments for `go test` (-race, etc.)
+  args:
+    defaults: ''
+
+runs:
+  using: "composite"
+  steps:
+    - name: 'Install gotestsum'
+      run: go install gotest.tools/gotestsum@latest
+
+    - name: 'Run gotestsum'
+      run: gotestsum --junitfile coverage-report.xml --rerun-fails=3 --raw-command \
+           go test -tags=${{ inputs.tags }} ${{ inputs.args }} -json -timeout 15m -coverprofile=coverage-report.cov ./...

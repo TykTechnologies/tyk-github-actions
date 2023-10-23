@@ -1,0 +1,24 @@
+# yamllint disable rule:line-length
+---
+name: Gateway 5.2 tests
+
+on:  # yamllint disable-line rule:truthy
+  workflow_call:
+
+    # Require ORG_GH_TOKEN to access private repositories.
+    secrets:
+      ORG_GH_TOKEN:
+        required: true
+
+jobs:
+  preflight:
+    uses: TykTechnologies/tyk-github-actions/.github/workflows/5.2-preflight.yml@main
+    secrets:
+      ORG_GH_TOKEN: ${{ secrets.ORG_GH_TOKEN }}
+
+  test:
+    needs:
+      - 'preflight'
+    uses: TykTechnologies/tyk-github-actions/.github/workflows/5.2-test.yml@main
+    secrets:
+      ORG_GH_TOKEN: ${{ secrets.ORG_GH_TOKEN }}
