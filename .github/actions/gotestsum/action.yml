@@ -42,6 +42,8 @@ runs:
       run: |
         package=$(go list .)
         packages=$(go list ./... | tail -n +2 | sed -e "s|$package/||g" | egrep -v "${{ inputs.exclude }}")
+        echo "Running tests for:"
+        echo "$packages" | xargs -n1 echo '-'
         for pkg in ${packages}; do
             coveragefile=${pkg//\//-}
             gotestsum --junitfile ${coveragefile}.xml --rerun-fails=3 --raw-command \
