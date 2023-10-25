@@ -48,3 +48,5 @@ COPY --from=docker /usr/local/bin/docker-compose /usr/local/bin/
 RUN docker compose version
 RUN go version
 RUN python3 -V
+
+ENV PYTHON_VERSION=3.9
