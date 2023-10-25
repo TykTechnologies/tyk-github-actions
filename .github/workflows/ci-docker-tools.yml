@@ -59,6 +59,8 @@ jobs:
           context: docker/tools/${{ matrix.tag }}
           tags: tykio/ci-tools:${{ matrix.tag }}
 
+      - run: docker image ls
+
       - name: 'Extract tykio/ci-tools:${{ matrix.tag }}'
         uses: shrink/actions-docker-extract@v3
         with:
