@@ -54,7 +54,7 @@ jobs:
         with:
           push: ${{ github.ref_name == 'main' }}
           pull: true
-          load: true
+          load: ${{ github.ref_name != 'main' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           context: docker/tools/${{ matrix.tag }}
