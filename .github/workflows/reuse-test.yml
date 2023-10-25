@@ -74,6 +74,8 @@ jobs:
         env:
           TYK_GW_STORAGE_HOST: redis
           TYK_DB_REDISHOST: redis
+          TYK_DB_STORAGE_MAIN_TYPE="sqlite"
+          TYK_DB_STORAGE_MAIN_CONNECTIONSTRING="/home/runner/work/tyk-analytics/tyk-analytics/test.db"
           PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION: python
         with:
           tags: "goplugin"
