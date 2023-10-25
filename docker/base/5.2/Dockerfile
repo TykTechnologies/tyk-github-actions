@@ -52,3 +52,4 @@ RUN go version
 RUN python3 -V
 
 ENV PYTHON_VERSION=3.9
+ENV GOFLAGS=-buildvcs=false
