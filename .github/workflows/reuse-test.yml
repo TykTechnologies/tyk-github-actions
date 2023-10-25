@@ -35,7 +35,11 @@ jobs:
   test:
     name: "Test: Redis ${{ inputs.redis-version }}"
     runs-on: ubuntu-latest
-    container: tykio/ci-base:${{ inputs.release }}
+    container:
+      image: tykio/ci-base:${{ inputs.release }}
+      volumes:
+        - ${{ github.workspace }}:${{ github.workspace }}
+    timeout-minutes: 30
 
     # Service containers to run
     services:

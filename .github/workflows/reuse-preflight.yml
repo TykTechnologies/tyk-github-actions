@@ -27,7 +27,10 @@ jobs:
   preflight:
     name: "Preflight checks"
     runs-on: ubuntu-latest
-    container: tykio/ci-base:${{ inputs.release }}
+    container:
+      image: tykio/ci-base:${{ inputs.release }}
+      volumes:
+        - ${{ github.workspace }}:${{ github.workspace }}
     timeout-minutes: 10
 
     steps:
