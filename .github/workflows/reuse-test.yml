@@ -39,6 +39,7 @@ jobs:
       image: tykio/ci-base:${{ inputs.release }}
       volumes:
         - ${{ github.workspace }}:${{ github.workspace }}
+      options: -w ${{ github.workspace }}
     timeout-minutes: 30
 
     # Service containers to run
