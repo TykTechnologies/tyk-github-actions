@@ -17,9 +17,6 @@ on:  # yamllint disable-line rule:truthy
 
     # Customize inputs from source repository invocation.
     inputs:
-      go-version:
-        type: string
-        default: "1.19.x"
       redis-version:
         type: string
         default: "6"
@@ -32,6 +29,7 @@ jobs:
   preflight:
     name: "Preflight: Go ${{ inputs.go-version }} Redis ${{ inputs.redis-version }}"
     runs-on: ubuntu-latest
+    container: tykio/ci-base:5.2
 
     steps:
       - name: "Use GitHub token"
@@ -41,11 +39,6 @@ jobs:
 
       - name: "Checkout repository"
         uses: TykTechnologies/tyk-github-actions/.github/actions/checkout@main
-
-      - name: "Setup Go"
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ inputs.go-version }}
 
       - name: "Start Redis"
         uses: supercharge/redis-github-action@1.1.0
