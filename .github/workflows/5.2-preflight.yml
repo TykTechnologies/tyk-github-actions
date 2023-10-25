@@ -53,6 +53,8 @@ jobs:
           restore-keys: ${{ runner.os }}-go-
 
       - name: "Build project"
+        env:
+          GOFLAGS: -buildvcs=false
         run: go build .
 
       - name: "Build project tests"
