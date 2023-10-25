@@ -26,5 +26,6 @@ jobs:
     uses: TykTechnologies/tyk-github-actions/.github/workflows/reuse-test.yml@main
     with:
       release: "5.2"
+      exclude: "/(mock|MDCB)$"
     secrets:
       ORG_GH_TOKEN: ${{ secrets.ORG_GH_TOKEN }}

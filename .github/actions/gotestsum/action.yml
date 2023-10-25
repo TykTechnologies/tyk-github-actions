@@ -22,6 +22,10 @@ inputs:
   loop:
     default: 'yes'
 
+  # Exclude some packages (grep pattern)
+  exclude:
+    default: '^$'
+
 runs:
   using: "composite"
   steps:
@@ -37,7 +41,7 @@ runs:
       if: ${{ inputs.loop == 'yes' }}
       run: |
         package=$(go list .)
-        packages=$(go list ./... | tail -n +2 | sed -e "s|$package/||g")
+        packages=$(go list ./... | tail -n +2 | sed -e "s|$package/||g" | grep -v ${{ inputs.exclude }})
         for pkg in ${packages}; do
             coveragefile=${pkg//\//-}
             gotestsum --junitfile ${coveragefile}.xml --rerun-fails=3 --raw-command \

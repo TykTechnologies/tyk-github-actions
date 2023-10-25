@@ -20,6 +20,9 @@ on:  # yamllint disable-line rule:truthy
       release:
         type: string
         default: "5.2"
+      exclude:
+        type: string
+        default: "^$"
       redis-version:
         type: string
         default: "6"
@@ -90,3 +93,4 @@ jobs:
         with:
           tags: "goplugin"
           args: "-race -count=1"
+          exclude: ${{ inputs.exclude }}
