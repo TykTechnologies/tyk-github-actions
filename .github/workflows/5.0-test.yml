@@ -52,6 +52,13 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: ${{ runner.os }}-go-
 
+      - name: 'Extract tykio/ci-tools'
+        uses: shrink/actions-docker-extract@v3
+        with:
+          image: tykio/ci-tools:latest
+          path: /usr/local/bin/.
+          destination: /usr/local/bin
+
       - name: "Build test plugin"
         run: |
           go build -race -o ./test/goplugins/goplugins.so -buildmode=plugin ./test/goplugins

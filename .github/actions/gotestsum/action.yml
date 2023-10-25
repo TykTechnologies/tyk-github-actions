@@ -25,10 +25,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: 'Install gotestsum'
-      shell: 'bash'
-      run: go install gotest.tools/gotestsum@latest
-
     - name: 'Run gotestsum on all packages'
       shell: 'bash'
       if: ${{ inputs.loop != 'yes' }}
