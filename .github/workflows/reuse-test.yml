@@ -73,6 +73,7 @@ jobs:
         uses: TykTechnologies/tyk-github-actions/.github/actions/gotestsum@main
         env:
           TYK_GW_STORAGE_HOST: redis
+          TYK_DB_REDISHOST: redis
           PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION: python
         with:
           tags: "goplugin"
