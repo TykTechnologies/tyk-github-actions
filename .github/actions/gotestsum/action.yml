@@ -1,7 +1,7 @@
 # yamllint disable rule:line-length
 ---
 
-name: 'Run gotestsum'
+name: "Run gotestsum"
 
 description: >-
   Run gotestsum with retry options against all packages
@@ -12,36 +12,36 @@ inputs:
 
   # Tags to include (csv)
   tags:
-    default: ''
+    default: ""
 
   # Arguments for `go test` (-race, etc.)
   args:
-    defaults: ''
+    defaults: ""
 
   # Loop through the packages
   loop:
-    default: 'yes'
+    default: "yes"
 
   # Exclude some packages (grep pattern)
   exclude:
-    default: '^$'
+    default: "^$"
 
 runs:
   using: "composite"
   steps:
-    - name: 'Run gotestsum on all packages'
-      shell: 'bash'
-      if: ${{ inputs.loop != 'yes' }}
+    - name: "Run gotestsum on all packages"
+      shell: "bash"
+      if: ${{ inputs.loop != "yes" }}
       run: |
         gotestsum --junitfile coverage-report.xml --rerun-fails=3 --raw-command \
         go test -tags=${{ inputs.tags }} ${{ inputs.args }} -json -timeout 15m -coverprofile=coverage-report.cov ./...
 
-    - name: 'Run gotestsum on each package'
-      shell: 'bash'
-      if: ${{ inputs.loop == 'yes' }}
+    - name: "Run gotestsum on each package"
+      shell: "bash"
+      if: ${{ inputs.loop == "yes" }}
       run: |
         package=$(go list .)
-        packages=$(go list ./... | tail -n +2 | sed -e "s|$package/||g" | grep -v ${{ inputs.exclude }})
+        packages=$(go list ./... | tail -n +2 | sed -e "s|$package/||g" | grep -v "${{ inputs.exclude }}")
         for pkg in ${packages}; do
             coveragefile=${pkg//\//-}
             gotestsum --junitfile ${coveragefile}.xml --rerun-fails=3 --raw-command \
