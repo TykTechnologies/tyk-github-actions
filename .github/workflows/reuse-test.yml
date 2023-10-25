@@ -64,7 +64,10 @@ jobs:
 
       - name: "Build test plugin"
         run: |
-          go build -race -o ./test/goplugins/goplugins.so -buildmode=plugin ./test/goplugins
+          # this step is gateway specific
+          if test -d "test/goplugins"; then
+            go build -race -o ./test/goplugins/goplugins.so -buildmode=plugin ./test/goplugins
+          fi
 
       - name: "Run tests"
         uses: TykTechnologies/tyk-github-actions/.github/actions/gotestsum@main
