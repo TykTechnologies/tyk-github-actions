@@ -31,14 +31,14 @@ runs:
   steps:
     - name: "Run gotestsum on all packages"
       shell: "bash"
-      if: ${{ inputs.loop != "yes" }}
+      if: ${{ inputs.loop != 'yes' }}
       run: |
         gotestsum --junitfile coverage-report.xml --rerun-fails=3 --raw-command \
         go test -tags=${{ inputs.tags }} ${{ inputs.args }} -json -timeout 15m -coverprofile=coverage-report.cov ./...
 
     - name: "Run gotestsum on each package"
       shell: "bash"
-      if: ${{ inputs.loop == "yes" }}
+      if: ${{ inputs.loop == 'yes' }}
       run: |
         package=$(go list .)
         packages=$(go list ./... | tail -n +2 | sed -e "s|$package/||g" | grep -v "${{ inputs.exclude }}")
