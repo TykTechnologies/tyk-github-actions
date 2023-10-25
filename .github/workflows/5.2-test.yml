@@ -59,6 +59,7 @@ jobs:
       - name: "Run tests"
         uses: TykTechnologies/tyk-github-actions/.github/actions/gotestsum@main
         env:
+          TYK_GW_STORAGE_HOST: localhost
           PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION: python
         with:
           tags: "goplugin"
