@@ -67,6 +67,7 @@ jobs:
           token: ${{ secrets.ORG_GH_TOKEN }}
 
       - run: echo ~/go/pkg/mod
+      - run: echo ${{ github.workspace }}
 
       - name: "Configure Go Cache"
         uses: actions/cache@v3
