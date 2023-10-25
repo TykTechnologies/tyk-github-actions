@@ -1,6 +1,6 @@
 # yamllint disable rule:line-length
 ---
-name: "Pre-flight checks"
+name: "Run go tests"
 
 # This github workflow runs the minimal build checks that are required to
 # pass for any change. It builds the project and the tests, making sure
@@ -26,11 +26,10 @@ env:
   GOPRIVATE: github.com/TykTechnologies
 
 jobs:
-  preflight:
-    name: "Preflight: Go ${{ inputs.go-version }} Redis ${{ inputs.redis-version }}"
+  test:
+    name: "Test: Go ${{ inputs.go-version }} Redis ${{ inputs.redis-version }}"
     runs-on: ubuntu-latest
-    container: tykio/ci-base:5.2
-    timeout-minutes: 10
+    container: tykio/ci-base:5.0
 
     steps:
       - name: "Use GitHub token"
@@ -53,7 +52,15 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: ${{ runner.os }}-go-
 
-      - name: "Build project"
+      - name: "Build test plugin"
+        run: |
+          go build -race -o ./test/goplugins/goplugins.so -buildmode=plugin ./test/goplugins
+
+      - name: "Run tests"
+        uses: TykTechnologies/tyk-github-actions/.github/actions/gotestsum@main
         env:
-          GOFLAGS: -buildvcs=false
-        run: go build .
+          PYTHON_VERSION: ${{ inputs.python-version }}
+          PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION: python
+        with:
+          tags: "goplugin"
+          args: "-race -count=1"

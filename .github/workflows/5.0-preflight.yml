@@ -29,7 +29,7 @@ jobs:
   preflight:
     name: "Preflight: Go ${{ inputs.go-version }} Redis ${{ inputs.redis-version }}"
     runs-on: ubuntu-latest
-    container: tykio/ci-base:5.2
+    container: tykio/ci-base:5.0
     timeout-minutes: 10
 
     steps:
