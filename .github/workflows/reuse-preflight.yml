@@ -48,8 +48,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: ${{ runner.os }}-go-
+          key: ${{ runner.os }}-preflight-${{ hashFiles('**/go.sum') }}
+          restore-keys: ${{ runner.os }}-preflight-
 
       - name: "Build project"
         run: go build .
