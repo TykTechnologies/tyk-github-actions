@@ -54,7 +54,19 @@ jobs:
         with:
           push: ${{ github.ref_name == 'main' }}
           pull: true
+          load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
           context: docker/tools/${{ matrix.tag }}
           tags: tykio/ci-tools:${{ matrix.tag }}
+
+      - run: docker image ls
+
+      - name: 'Extract tykio/ci-tools:${{ matrix.tag }}'
+        uses: shrink/actions-docker-extract@v3
+        with:
+          image: tykio/ci-tools:${{ matrix.tag }}
+          path: /usr/local/bin/.
+          destination: /usr/local/bin
+
+      - run: gotestsum --version
