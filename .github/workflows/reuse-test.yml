@@ -34,6 +34,19 @@ jobs:
     runs-on: ubuntu-latest
     container: tykio/ci-base:${{ inputs.release }}
 
+    # Service containers to run
+    services:
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: redis:${{ inputs.redis-version }}
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: "Use GitHub token"
         env:
@@ -44,11 +57,6 @@ jobs:
         uses: TykTechnologies/tyk-github-actions/.github/actions/checkout@main
         with:
           token: ${{ secrets.ORG_GH_TOKEN }}
-
-      - name: "Start Redis"
-        uses: supercharge/redis-github-action@1.1.0
-        with:
-          redis-version: ${{ inputs.redis-version }}
 
       - name: "Configure Go Cache"
         uses: actions/cache@v3
