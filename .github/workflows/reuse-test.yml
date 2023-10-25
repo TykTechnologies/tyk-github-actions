@@ -17,6 +17,9 @@ on:  # yamllint disable-line rule:truthy
 
     # Customize inputs from source repository invocation.
     inputs:
+      release:
+        type: string
+        default: "5.2"
       redis-version:
         type: string
         default: "6"
@@ -29,7 +32,7 @@ jobs:
   test:
     name: "Test: Redis ${{ inputs.redis-version }}"
     runs-on: ubuntu-latest
-    container: tykio/ci-base:5.2
+    container: tykio/ci-base:${{ inputs.release }}
 
     steps:
       - name: "Use GitHub token"

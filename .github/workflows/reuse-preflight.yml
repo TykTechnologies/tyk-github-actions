@@ -13,6 +13,12 @@ on:  # yamllint disable-line rule:truthy
       ORG_GH_TOKEN:
         required: true
 
+    # Customize inputs from source repository invocation.
+    inputs:
+      release:
+        type: string
+        default: "5.2"
+
 env:
   # Declare GOPRIVATE to enable fetching private repo packages.
   GOPRIVATE: github.com/TykTechnologies
@@ -21,7 +27,7 @@ jobs:
   preflight:
     name: "Preflight checks"
     runs-on: ubuntu-latest
-    container: tykio/ci-base:5.2
+    container: tykio/ci-base:${{ inputs.release }}
     timeout-minutes: 10
 
     steps:
