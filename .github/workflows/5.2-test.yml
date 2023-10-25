@@ -27,7 +27,7 @@ env:
 
 jobs:
   test:
-    name: "Test: Go ${{ inputs.go-version }} Redis ${{ inputs.redis-version }}"
+    name: "Test: Redis ${{ inputs.redis-version }}"
     runs-on: ubuntu-latest
     container: tykio/ci-base:5.2
 
@@ -59,7 +59,6 @@ jobs:
       - name: "Run tests"
         uses: TykTechnologies/tyk-github-actions/.github/actions/gotestsum@main
         env:
-          PYTHON_VERSION: ${{ inputs.python-version }}
           PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION: python
         with:
           tags: "goplugin"
