@@ -34,3 +34,6 @@ RUN curl -sSL https://github.com/go-task/task/releases/download/${TASK_VERSION}/
 
 FROM scratch
 COPY --from=tools-build /usr/local/bin/ /usr/local/bin/
+COPY --from=busybox:latest /bin/ls /bin/ls
+
+ENTRYPOINT ["/bin/ls"]
