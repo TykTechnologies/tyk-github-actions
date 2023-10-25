@@ -18,6 +18,7 @@ RUN apt -qq update && \
     apt -qqy install \
         curl \
         wget \
+        git-lfs \
         cython3 \
         pip \
         python3 \
