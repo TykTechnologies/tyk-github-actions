@@ -65,13 +65,10 @@ jobs:
         with:
           token: ${{ secrets.ORG_GH_TOKEN }}
 
-      - run: echo ~/go/pkg/mod
-      - run: echo ${{ github.workspace }}
-
       - name: "Configure Go Cache"
         uses: actions/cache@v3
         with:
-          path: ~/go/pkg/mod
+          path: /go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: ${{ runner.os }}-go-
 

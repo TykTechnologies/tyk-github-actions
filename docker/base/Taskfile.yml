@@ -38,6 +38,7 @@ tasks:
         cmd: |
           docker run --rm {{.image}}:{{.tag}} python3 -V
           docker run --rm {{.image}}:{{.tag}} go version
+          docker run --rm {{.image}}:{{.tag}} go env | grep pkg
 
   diff:
     desc: "Print image diffs"
