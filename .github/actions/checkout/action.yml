@@ -9,6 +9,9 @@ description: >-
 inputs:
   jobname:
     default: ${{ github.job }}
+  token:
+    description: 'A Github PAT'
+    required: true
 
 runs:
   using: "composite"
@@ -17,6 +20,7 @@ runs:
       uses: actions/checkout@v3
       with:
         ref: ${{ github.event.pull_request.head.ref }}
+        token: ${{ inputs.token }}
         fetch-depth: 1
         submodules: true
         lfs: true

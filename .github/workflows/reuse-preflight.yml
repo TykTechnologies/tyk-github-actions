@@ -38,6 +38,8 @@ jobs:
 
       - name: "Checkout repository"
         uses: TykTechnologies/tyk-github-actions/.github/actions/checkout@main
+        with:
+          token: ${{ secrets.ORG_GH_TOKEN }}
 
       - name: "Configure Go Cache"
         uses: actions/cache@v3

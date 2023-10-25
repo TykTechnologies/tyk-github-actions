@@ -42,6 +42,8 @@ jobs:
 
       - name: "Checkout repository"
         uses: TykTechnologies/tyk-github-actions/.github/actions/checkout@main
+        with:
+          token: ${{ secrets.ORG_GH_TOKEN }}
 
       - name: "Start Redis"
         uses: supercharge/redis-github-action@1.1.0
