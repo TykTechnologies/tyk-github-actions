@@ -53,6 +53,8 @@ jobs:
           restore-keys: ${{ runner.os }}-go-
 
       - name: "Build test plugin"
+        env:
+          GOFLAGS: -buildvcs=false
         run: |
           go build -race -o ./test/goplugins/goplugins.so -buildmode=plugin ./test/goplugins
 
