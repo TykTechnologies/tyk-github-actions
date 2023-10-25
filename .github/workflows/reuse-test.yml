@@ -39,6 +39,7 @@ jobs:
       image: tykio/ci-base:${{ inputs.release }}
       volumes:
         - ${{ github.workspace }}:${{ github.workspace }}
+        - /github/home:/github/home
       options: -w ${{ github.workspace }}
     timeout-minutes: 30
 
