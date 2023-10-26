@@ -26,10 +26,9 @@ The valid workflow files are:
 - `latest-gateway.yml` for gateway, master (next CI release)
 
 And the same for `dashboard`. Referencing the workflow in this way
-ensures that the latest version for the release target is in use.
-
-This is all that is needed on the consumer side. Even with branching, the CI
-for a single release would be maintained across all the release branches that
+ensures that the latest version for the release target is in use. This is
+all that is needed on the consumer side. Even with branching, the CI for
+a single release would be maintained across all the release branches that
 now just reference it via the reusable GitHub action.
 
 This is a state diagram for the current actions structure:
