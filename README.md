@@ -4,7 +4,7 @@ The repository sets up reusable CI pipelines which are organized by the
 product being tested. In order to use the pipelines, the following github
 action needs to be added to the source repository.
 
-```
+```yaml
 name: Tests latest
 
 on:
@@ -167,7 +167,7 @@ The image is rebuilt weekly.
 
 To use the CI tools from any github pipeline:
 
-```
+```yaml
 - name: 'Extract tykio/ci-tools:${{ matrix.tag }}'
   uses: shrink/actions-docker-extract@v3
   with:
