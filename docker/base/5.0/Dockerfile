@@ -1,5 +1,5 @@
 # The base image, overridable with arguments
-ARG BASE_IMAGE=golang:1.16
+ARG BASE_IMAGE=golang:1.16-bullseye
 
 # Install docker from docker image
 FROM docker:24-cli AS docker
