@@ -208,3 +208,30 @@ The images are rebuilt weekly.
 A local Taskfile is available in `docker/base/` that allows you to build
 the base images locally. Changes are built in PRs, but only pushed when
 the PR gets merged to the main branch.
+
+# Creating a new pipeline
+
+In order to create a new CI pipeline, it's expected that the current
+`latest` pipelines and docker images will become the future 5.3 release
+(+1 minor version). When that happens, all we need is to create a local
+copy of those workflows.
+
+This must happen on significant possibly breaking changes:
+
+- The upgrade of Go versions (1.16, 1.19, 1.21) and tooling
+- A change of the base operating system (Debian release, Alpine, etc.)
+- Architectural requirements (arm64 test pipelines)
+
+Depending on how the operating system transitions it's packages,
+individual release target base CI images need to pin an expected version
+of a package. For example, the OS may provide packages for both python3.9
+and python3.11; while we may work with both versions, pinning a
+dependency ensures our tests will run against a known version, and will
+not break unnecessarily if the OS decides to update their default
+installation from 3.9 to 3.11.
+
+Pinning dependencies is also important for CI tooling. Keeping the
+tooling up to date requires updating the configuration, invocation, and
+may be something that we only want to do against the latest release.
+Pinning tooling versions ensures that the config and the release CI for
+an older release will continue to work in the future.
