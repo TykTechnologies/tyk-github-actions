@@ -28,7 +28,7 @@ inputs:
 
   # How many times to rerun a test on failure
   rerun:
-    default: "0"
+    default: "1"
 
 runs:
   using: "composite"
