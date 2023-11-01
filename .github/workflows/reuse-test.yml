@@ -37,6 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: tykio/ci-base:${{ inputs.release }}
+      options: --cpus 4
       volumes:
         - ${{ github.workspace }}:${{ github.workspace }}
     timeout-minutes: 30
