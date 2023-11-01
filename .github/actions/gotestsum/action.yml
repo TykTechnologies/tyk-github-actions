@@ -26,6 +26,10 @@ inputs:
   exclude:
     default: "^$"
 
+  # How many times to rerun a test on failure
+  rerun:
+    default: "0"
+
 runs:
   using: "composite"
   steps:
@@ -46,6 +50,6 @@ runs:
         echo "$packages" | xargs -n1 echo '-'
         for pkg in ${packages}; do
             coveragefile=${pkg//\//-}
-            gotestsum --junitfile ${coveragefile}.xml --rerun-fails=3 --raw-command \
+            gotestsum --junitfile ${coveragefile}.xml --rerun-fails=${{ inputs.rerun }} --raw-command \
             go test -tags=${{ inputs.tags }} ${{ inputs.args }} -json -timeout 15m -coverprofile=${coveragefile}.cov ./${pkg}
         done
