@@ -5,7 +5,7 @@ version: "3"
 vars:
   tag: 5.2
   python: "3.9"
-  branch: fix/tt-10329/fix-python-3.11
+  branch: release-5.2
   image: internal/ci-base:{{ .tag }}
 
 tasks:

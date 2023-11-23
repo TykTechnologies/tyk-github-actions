@@ -45,6 +45,9 @@ COPY --from=docker /usr/local/libexec/docker/cli-plugins/docker-compose /usr/loc
 COPY --from=docker /usr/local/bin/docker /usr/local/bin/
 COPY --from=docker /usr/local/bin/docker-compose /usr/local/bin/
 
+# Install ci-tools
+COPY --from=tykio/ci-tools:latest /usr/local/bin/* /usr/local/bin/
+
 RUN docker compose version
 RUN go version
 RUN python3 -V
