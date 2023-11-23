@@ -30,16 +30,20 @@ export PKG_PATH=${GOPATH}/src/github.com/TykTechnologies/tyk
 # exit on non-zero exit from go test/vet
 set -e
 
-# install gotestsum
-go install gotest.tools/gotestsum@latest
-
 # build Go-plugin used in tests
 echo "Building go plugin"
-go build -race -o ./test/goplugins/goplugins.so -buildmode=plugin ./test/goplugins
+go build -race -o ./test/goplugins/goplugins_race.so -buildmode=plugin ./test/goplugins
+go build -o ./test/goplugins/goplugins.so -buildmode=plugin ./test/goplugins
 
 for pkg in ${packages}; do
-    # sanitize coverage output file
-    coveragefile=${pkg//\//-}
+    # local package reference
+    pkg=${pkg/github.com\/TykTechnologies\/tyk/.}
+    echo "# ${pkg}"
 
-    gotestsum --rerun-fails=3 --raw-command go test ${OPTS} -json -timeout ${TEST_TIMEOUT} -coverprofile=${coveragefile}.cov -cover ./${pkg}
+    # sanitize coverage output file
+    coveragefile=${pkg/.\//}
+    coveragefile=${coveragefile//\//-} # `echo $coveragefile | sed -e 's/\//-/g'`
+
+    echo go test ${OPTS} -timeout ${TEST_TIMEOUT} -coverprofile=${coveragefile}.cov ./${pkg}
+    gotestsum --raw-command go test ${OPTS} -json -timeout ${TEST_TIMEOUT} -coverprofile=${coveragefile}.cov -cover ./${pkg}
 done
