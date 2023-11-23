@@ -1,6 +1,6 @@
 # yamllint disable rule:line-length
 ---
-name: Dashboard 5.0 tests
+name: Dashboard 5.2 tests
 
 on:  # yamllint disable-line rule:truthy
   workflow_call:
@@ -11,21 +11,20 @@ on:  # yamllint disable-line rule:truthy
         required: true
 
 concurrency:
-  group: ${{ github.head_ref || github.run_id }}-5.0
+  group: ${{ github.head_ref || github.run_id }}-5.2
   cancel-in-progress: true
 
 jobs:
   preflight:
     uses: TykTechnologies/tyk-github-actions/.github/workflows/reuse-preflight.yml@main
     with:
-      release: "5.0"
+      release: "5.2"
     secrets:
       ORG_GH_TOKEN: ${{ secrets.ORG_GH_TOKEN }}
 
   test:
     uses: TykTechnologies/tyk-github-actions/.github/workflows/reuse-test.yml@main
     with:
-      release: "5.0"
-      exclude: "/(mock|MDCB)$"
+      release: "5.2"
     secrets:
       ORG_GH_TOKEN: ${{ secrets.ORG_GH_TOKEN }}

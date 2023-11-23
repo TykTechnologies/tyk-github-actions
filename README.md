@@ -14,22 +14,25 @@ on:
 
 jobs:
   gateway-ci:
-    uses: TykTechnologies/tyk-github-actions/.github/workflows/latest-gateway.yml@main
+    uses: TykTechnologies/tyk-github-actions/.github/workflows/gateway-latest.yml@main
     secrets:
       ORG_GH_TOKEN: ${{ secrets.ORG_GH_TOKEN }}
 ```
 
 The valid workflow files are:
 
-- `5.0-gateway.yml` for gateway, release-5-lts (LTS release)
-- `5.2-gateway.yml` for gateway, release 5.2/master (current release)
-- `latest-gateway.yml` for gateway, master (next CI release)
+- `gateway-5.0.yml` for gateway, release-5-lts (LTS release)
+- `gateway-5.2.yml` for gateway, release 5.2/master (current release)
+- `gateway-latest.yml` for gateway, master (next CI release)
+- `dashboard-5.0.yml` for dashboard, release-5-lts (LTS release)
+- `dashboard-5.2.yml` for dashboard, release 5.2/master (current release)
+- `dashboard-latest.yml` for dashboard, master (next CI release)
 
-And the same for `dashboard`. Referencing the workflow in this way
-ensures that the latest version for the release target is in use. This is
-all that is needed on the consumer side. Even with branching, the CI for
-a single release would be maintained across all the release branches that
-now just reference it via the reusable GitHub action.
+Referencing the workflow in this way ensures that the latest version for
+the release target is in use. This is all that is needed on the consumer
+side. Even with branching, the CI for a single release would be
+maintained across all the release branches that now just reference it via
+the reusable GitHub action.
 
 This is a state diagram for the current actions structure:
 
