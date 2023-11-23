@@ -73,13 +73,6 @@ jobs:
           key: ${{ runner.os }}-test-${{ hashFiles('**/go.sum') }}
           restore-keys: ${{ runner.os }}-test-
 
-      - name: 'Extract tykio/ci-tools'
-        uses: shrink/actions-docker-extract@v3
-        with:
-          image: tykio/ci-tools:latest
-          path: /usr/local/bin/.
-          destination: /usr/local/bin
-
       - name: "Build test plugin"
         run: |
           # this step is gateway specific
