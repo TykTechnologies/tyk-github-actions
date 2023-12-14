@@ -1,12 +1,19 @@
 services:
   redis:
-    image: redis:6.0-alpine
+    image: redis:6-alpine
+    command: redis-server --appendonly yes
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
       interval: 5s
       retries: 10
       start_period: 2s
       timeout: 10s
+
+  redis-log:
+    image: redis:7-alpine
+    depends_on:
+      - redis
+    command: redis-cli -h redis monitor
 
   gw:
     image: ${GATEWAY_IMAGE}
@@ -17,13 +24,17 @@ services:
       - redis
       - httpbin
     volumes:
-      - ./data/api.json:/opt/tyk-gateway/apps/api.json
+      - ./data/:/opt/tyk-gateway/apps/
     ports:
       - "0.0.0.0:8080:8080"
     environment:
       TYK_DB_REDISHOST: redis
       TYK_LOGLEVEL: error
-      TYK_GW_ENABLELEAKYBUCKETRATELIMITER: ${TYK_GW_ENABLELEAKYBUCKETRATELIMITER}
+      TYK_GW_ENABLELEAKYBUCKETRATELIMITER:   ${TYK_GW_ENABLELEAKYBUCKETRATELIMITER:-false}
+      TYK_GW_ENABLETOKENBUCKETRATELIMITER:   ${TYK_GW_ENABLETOKENBUCKETRATELIMITER:-false}
+      TYK_GW_ENABLEFIXEDWINDOWRATELIMITER:   ${TYK_GW_ENABLEFIXEDWINDOWRATELIMITER:-false}
+      TYK_GW_ENABLESLIDINGWINDOWRATELIMITER: ${TYK_GW_ENABLESLIDINGWINDOWRATELIMITER:-false}
+      TYK_GW_ENABLESENTINELRATELIMITER:      ${TYK_GW_ENABLESENTINELRATELIMITER:-false}
 
   httpbin:
     image: tykio/ci-tools

@@ -1,0 +1,16 @@
+---
+version: "3"
+
+tasks:
+  default:
+    desc: "Ingest data for charts"
+    vars:
+      source: ../parse/output/
+      outputs:
+        sh: find {{.source}} -type f -name '*.json' | xargs -n1 basename
+    cmds:
+      - mkdir -p output
+      - go fmt ./...
+      - goimports -w .
+      - for: { var: outputs, as: output }
+        cmd: go run . -f {{.source}}{{.output}} -p 5s > output/{{.output | replace ".json" ".png"}}
