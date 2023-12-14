@@ -1,0 +1,59 @@
+---
+version: "3"
+
+# This is the root taskfile with several targets that configure the gateway for
+# a particular rate limit algo, using docker compose to start the gateway and
+# load the appropriate API from the configuration folders and run tests.
+#
+# Each test collects as much as it can:
+#
+# - Gateway memory/cpu profile information during test
+# - The back-end logs to inspect request count and rate
+# - The client-side request/response rates (using hey-hdr)
+
+vars:
+  timestamp:
+    sh: date +%s
+
+env:
+  GATEWAY_IMAGE: internal/tyk-gateway
+
+tasks:
+  leaky:
+    desc: "Test Leaky Bucket rate limits"
+    vars:
+      suite: 'leaky-bucket'
+    cmds:
+      - task: benchmark
+        vars:
+          suite: '{{.suite}}'
+          rate: 50
+          duration: 3
+
+  benchmark:
+    desc: "Run benchmarks with hey"
+    required:
+      - suite
+      - rate
+      - duration
+    env:
+      timestamp: '{{.timestamp}}'
+      suite: '{{.suite}}'
+      TYK_GW_ENABLELEAKYBUCKETRATELIMITER: true
+    vars:
+      testurl: http://localhost:8080/smoke-test-api/?arg=test
+    cmds:
+      - defer: find -type f -size 0 -delete
+      - defer: docker compose down --remove-orphans
+      # https://github.com/moby/moby/issues/7710, can't use wildcards with docker (compose) cp
+      - defer: docker compose exec gw bash -c 'tar -zcf - ./tyk.*.*prof' | tar -zxf - -C logs/
+      - defer: docker compose restart gw
+      - docker compose pull -q --ignore-pull-failures
+      - docker compose up -d --remove-orphans
+      - docker compose logs -t -f &
+      - hey -z {{.duration}}s -q {{.rate}} -o csv "{{.testurl}}" > ./logs/{{.suite}}-{{.timestamp}}-hey.csv
+
+#  token:
+#  fixed:
+#  rolling:
+#  sliding:
