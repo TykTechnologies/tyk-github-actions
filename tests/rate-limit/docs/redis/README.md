@@ -54,12 +54,27 @@ to spike arrest mode. It lets 1 request through per time window.
 ![Token Bucket outgoing rate](./sliding-window-rate-out.png)
 ![Token Bucket requests](./sliding-window-requests.png)
 
+This counts the requests for two windows of 1 second. After the request
+limit is exceeded in a window, the behaviour is to block requests until
+the rate limit drops below the required level.
+
+This is most similar to our RRL/ Sentinel RRL implementations, but more
+efficient as it only requires maintaining two redis keys, rather than a
+request log for the window.
+
 ## Fixed window
 
 ![Token Bucket incoming rate](./fixed-window-rate-in.png)
 ![Token Bucket latency](./fixed-window-latency.png)
 ![Token Bucket outgoing rate](./fixed-window-rate-out.png)
 ![Token Bucket requests](./fixed-window-requests.png)
+
+This method counts the number of requests per window and then blocks the
+requests if they go over the defined capacity.
+
+The interval for the fixed window is set by the rate limit setting (1
+second). As the tests don't exactly line up and start on 00.00 (start of
+second), the initial blocking is dependent on when the requests start.
 
 ## Sliding log (sentinel)
 
@@ -69,7 +84,14 @@ to spike arrest mode. It lets 1 request through per time window.
 ![Sentinel requests](./sentinel-requests.png)
 
 Sliding log begins to count traffic in the current window and will start
-to block traffic if the capacity is exceeded.
+to block traffic if the capacity is exceeded. It will continue to block
+traffic as long as the rate is higher than configured.
+
+- If sentinel is configured, it will block traffic until at least `per` duration.
+- If sentinel is NOT configured, it will block traffic until request rate drops.
+
+The main difference is just the amount of time requests get blocked.
+Blocked requests continue to be counted against the rate limit.
 
 ## DRL (non-redis)
 
@@ -77,3 +99,7 @@ to block traffic if the capacity is exceeded.
 ![DRL latency](./drl-latency.png)
 ![DRL outgoing rate](./drl-rate-out.png)
 ![DRL requests](./drl-requests.png)
+
+This should behave like leaky bucket, however it doesn't seem to be
+blocking requests and the throughput is higher than configured, needs
+more investigation.
