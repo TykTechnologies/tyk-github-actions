@@ -7,6 +7,13 @@ The following examples configure:
 
 All rate limiters should reach blocking/throttling behaviour.
 
+For each limiter, the following graphs are presented:
+
+- incoming rate
+- response latency
+- outgoing rate
+- outgoing request count
+
 ## Leaky bucket
 
 ![Leaky Bucket incoming rate](./leaky-bucket-rate-in.png)
