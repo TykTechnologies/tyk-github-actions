@@ -5,7 +5,7 @@ tasks:
   default:
     desc: "Ingest data for charts"
     vars:
-      limiters: 'fixed-window sliding-window leaky-bucket token-bucket sentinel'
+      limiters: 'drl fixed-window sliding-window leaky-bucket token-bucket sentinel'
     cmds:
       - mkdir -p output
       - go fmt ./...

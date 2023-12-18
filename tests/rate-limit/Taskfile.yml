@@ -12,6 +12,9 @@ version: "3"
 # - The client-side request/response rates (using hey-hdr)
 
 vars:
+  rate: 50
+  duration: 10
+  concurrency: 1
   timestamp:
     sh: date +%s
 
@@ -22,11 +25,16 @@ tasks:
   default:
     desc: "Default"
     cmds:
+      - cd logs && task && cd -
+      - task: drl
       - task: token
       - task: leaky
       - task: fixed
       - task: sliding
       - task: sentinel
+      - cd cmd/parse && task && cd -
+      - cd cmd/render && task duration={{.duration}} && cd -
+      - mv cmd/render/output/* docs/redis/
 
   token:
     desc: "Test token bucket rate limits"
@@ -36,9 +44,6 @@ tasks:
       - task: benchmark
         vars:
           suite: '{{.suite}}'
-          concurrency: 1
-          rate: 50
-          duration: 5
 
   fixed:
     desc: "Test fixed window rate limits"
@@ -48,9 +53,6 @@ tasks:
       - task: benchmark
         vars:
           suite: '{{.suite}}'
-          concurrency: 1
-          rate: 50
-          duration: 5
 
   sliding:
     desc: "Test sliding window rate limits"
@@ -60,10 +62,6 @@ tasks:
       - task: benchmark
         vars:
           suite: '{{.suite}}'
-          concurrency: 1
-          rate: 50
-          duration: 5
-
 
   sentinel:
     desc: "Test Sentinel redis rate limits"
@@ -73,9 +71,6 @@ tasks:
       - task: benchmark
         vars:
           suite: '{{.suite}}'
-          concurrency: 1
-          rate: 50
-          duration: 5
 
   leaky:
     desc: "Test Leaky Bucket rate limits"
@@ -85,17 +80,20 @@ tasks:
       - task: benchmark
         vars:
           suite: '{{.suite}}'
-          concurrency: 1
-          rate: 50
-          duration: 5
+
+  drl:
+    desc: "Test DRL rate limits"
+    vars:
+      suite: 'drl'
+    cmds:
+      - task: benchmark
+        vars:
+          suite: '{{.suite}}'
 
   benchmark:
     desc: "Run benchmarks with hey"
     required:
       - suite
-      - rate
-      - concurrency
-      - duration
     env:
       timestamp: '{{.timestamp}}'
       suite: '{{.suite}}'

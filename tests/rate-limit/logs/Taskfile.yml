@@ -5,4 +5,4 @@ tasks:
   default:
     desc: "Clean assets"
     cmds:
-      - rm *.json *.csv *prof
+      - rm -f *.json *.csv *prof

@@ -108,6 +108,7 @@ func processCSV(filename string) error {
 	}
 
 	fillRate(records)
+	fillCount(records)
 
 	return render(records)
 }
@@ -115,6 +116,7 @@ func processCSV(filename string) error {
 type Record struct {
 	Time     time.Time
 	Rate     int
+	Count    int
 	Offset   time.Duration
 	Duration time.Duration
 	Status   int
@@ -122,6 +124,12 @@ type Record struct {
 
 func (r *Record) String() string {
 	return fmt.Sprintf("time=%s offset=%.2fs duration=%dns status=%d", r.Time, r.Offset.Seconds(), r.Duration.Nanoseconds(), r.Status)
+}
+
+func fillCount(series []*Record) {
+	for idx, r := range series {
+		r.Count = idx + 1
+	}
 }
 
 func fillRate(series []*Record) {
@@ -177,6 +185,7 @@ func processJSON(filename string) error {
 
 	fillOffset(records)
 	fillRate(records)
+	fillCount(records)
 
 	return render(records)
 }
