@@ -11,6 +11,7 @@ All rate limiters should reach blocking/throttling behaviour.
 
 ![Leaky Bucket incoming rate](./leaky-bucket-rate-in.png)
 ![Leaky Bucket outgoing rate](./leaky-bucket-rate-out.png)
+![Leaky Bucket requests](./leaky-bucket-requests.png)
 
 Leaky bucket adds delays when processing requests, ensuring a
 configurable input/output rate. The gateway queues the requests for a
@@ -24,6 +25,7 @@ Left to verify:
 
 ![Token Bucket incoming rate](./token-bucket-rate-in.png)
 ![Token Bucket outgoing rate](./token-bucket-rate-out.png)
+![Token Bucket requests](./token-bucket-requests.png)
 
 Token bucket counts the available number of requests up to the configured
 outgoing rate. It allows `40` requests in a given window. If the capacity
@@ -39,16 +41,19 @@ to spike arrest mode. It lets 1 request through per time window.
 
 ![Token Bucket incoming rate](./sliding-window-rate-in.png)
 ![Token Bucket outgoing rate](./sliding-window-rate-out.png)
+![Token Bucket requests](./sliding-window-requests.png)
 
 ## Fixed window
 
 ![Token Bucket incoming rate](./fixed-window-rate-in.png)
 ![Token Bucket outgoing rate](./fixed-window-rate-out.png)
+![Token Bucket requests](./fixed-window-requests.png)
 
 ## Sliding log (sentinel)
 
 ![Sentinel incoming rate](./sentinel-rate-in.png)
 ![Sentinel outgoing rate](./sentinel-rate-out.png)
+![Sentinel requests](./sentinel-requests.png)
 
 Sliding log begins to count traffic in the current window and will start
 to block traffic if the capacity is exceeded.
@@ -57,4 +62,4 @@ to block traffic if the capacity is exceeded.
 
 ![DRL incoming rate](./drl-rate-in.png)
 ![DRL outgoing rate](./drl-rate-out.png)
-
+![DRL requests](./drl-requests.png)
