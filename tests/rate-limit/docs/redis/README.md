@@ -4,6 +4,7 @@ The following examples configure:
 
 - Rate limiter: A `rate` value of `40` and `per` value of `1` (`40 requests / second`),
 - Request rate: A client request rate of `50 requests / second`,
+- Test duration: `10` seconds.
 
 All rate limiters should reach blocking/throttling behaviour.
 
