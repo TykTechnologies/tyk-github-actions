@@ -1,0 +1,60 @@
+# Redis rate limit behaviour
+
+The following examples configure:
+
+- Rate limiter: A `rate` value of `40` and `per` value of `1` (`40 requests / second`),
+- Request rate: A client request rate of `50 requests / second`,
+
+All rate limiters should reach blocking/throttling behaviour.
+
+## Leaky bucket
+
+![Leaky Bucket incoming rate](./leaky-bucket-rate-in.png)
+![Leaky Bucket outgoing rate](./leaky-bucket-rate-out.png)
+
+Leaky bucket adds delays when processing requests, ensuring a
+configurable input/output rate. The gateway queues the requests for a
+time if they are going over the rate limit.
+
+Left to verify:
+
+- if the capacity (rate) is exhausted, it should start blocking requests
+
+## Token bucket
+
+![Token Bucket incoming rate](./token-bucket-rate-in.png)
+![Token Bucket outgoing rate](./token-bucket-rate-out.png)
+
+Token bucket counts the available number of requests up to the configured
+outgoing rate. It allows `40` requests in a given window. If the capacity
+is exceeded and no more tokens are left in the window, it begings to block
+requests.
+
+Left to verify:
+
+- If the request rate is higher than configured then the behaviour changes
+to spike arrest mode. It lets 1 request through per time window.
+
+## Sliding window
+
+![Token Bucket incoming rate](./sliding-window-rate-in.png)
+![Token Bucket outgoing rate](./sliding-window-rate-out.png)
+
+## Fixed window
+
+![Token Bucket incoming rate](./fixed-window-rate-in.png)
+![Token Bucket outgoing rate](./fixed-window-rate-out.png)
+
+## Sliding log (sentinel)
+
+![Sentinel incoming rate](./sentinel-rate-in.png)
+![Sentinel outgoing rate](./sentinel-rate-out.png)
+
+Sliding log begins to count traffic in the current window and will start
+to block traffic if the capacity is exceeded.
+
+## DRL (non-redis)
+
+![DRL incoming rate](./drl-rate-in.png)
+![DRL outgoing rate](./drl-rate-out.png)
+
