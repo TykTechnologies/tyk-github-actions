@@ -2,8 +2,8 @@
 
 Currently this does the following:
 
-- Start a gateway with a rate limiter configuration flag via env (`task leaky`).
-- Issue hey at a request rate of 50 requests/s for 5 seconds.
+- Start a gateway with a rate limiter configuration flag via env.
+- Issue hey at a request rate of 50 requests/s for 10 seconds.
 - Log the incoming request rate and HTTP status code responses with rakyll/hey.
 - Log the back-end request rate and HTTP responses (200 OK, can assert JSON).
 - Log the gateway `--memoryprofile` during the benchmark.
