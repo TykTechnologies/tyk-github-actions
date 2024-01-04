@@ -55,7 +55,7 @@ jobs:
       - name: 'Build tykio/ci-base:${{ matrix.tag }}'
         uses: docker/build-push-action@v4
         with:
-          push: ${{ github.ref_name == 'main' }}
+          push: ${{ github.ref_name == 'main' || github.event_name == 'workflow_dispatch' }}
           pull: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
