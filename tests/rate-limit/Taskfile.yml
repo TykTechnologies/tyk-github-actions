@@ -1,0 +1,126 @@
+# yamllint disable rule:line-length
+---
+version: "3"
+
+# This is the root taskfile with several targets that configure the gateway for
+# a particular rate limit algo, using docker compose to start the gateway and
+# load the appropriate API from the configuration folders and run tests.
+#
+# Each test collects as much as it can:
+#
+# - Gateway memory/cpu profile information during test
+# - The back-end logs to inspect request count and rate
+# - The client-side request/response rates (using hey-hdr)
+
+vars:
+  rate: 50
+  duration: 10
+  concurrency: 1
+  timestamp:
+    sh: date +%s
+
+env:
+  GATEWAY_IMAGE: internal/tyk-gateway
+
+tasks:
+  default:
+    desc: "Default"
+    cmds:
+      - cd logs && task && cd -
+      - task: drl
+      - task: token
+      - task: leaky
+      - task: fixed
+      - task: sliding
+      - task: sentinel
+      - cd cmd/parse && task && cd -
+      - cd cmd/render && task duration={{.duration}} && cd -
+      - mv cmd/render/output/* docs/redis/
+
+  token:
+    desc: "Test token bucket rate limits"
+    vars:
+      suite: 'token-bucket'
+    cmds:
+      - task: benchmark
+        vars:
+          suite: '{{.suite}}'
+
+  fixed:
+    desc: "Test fixed window rate limits"
+    vars:
+      suite: 'fixed-window'
+    cmds:
+      - task: benchmark
+        vars:
+          suite: '{{.suite}}'
+
+  sliding:
+    desc: "Test sliding window rate limits"
+    vars:
+      suite: 'sliding-window'
+    cmds:
+      - task: benchmark
+        vars:
+          suite: '{{.suite}}'
+
+  sentinel:
+    desc: "Test Sentinel redis rate limits"
+    vars:
+      suite: 'sentinel'
+    cmds:
+      - task: benchmark
+        vars:
+          suite: '{{.suite}}'
+
+  leaky:
+    desc: "Test Leaky Bucket rate limits"
+    vars:
+      suite: 'leaky-bucket'
+    cmds:
+      - task: benchmark
+        vars:
+          suite: '{{.suite}}'
+
+  drl:
+    desc: "Test DRL rate limits"
+    vars:
+      suite: 'drl'
+    cmds:
+      - task: benchmark
+        vars:
+          suite: '{{.suite}}'
+
+  benchmark:
+    desc: "Run benchmarks with hey"
+    required:
+      - suite
+    env:
+      timestamp: '{{.timestamp}}'
+      suite: '{{.suite}}'
+      TYK_GW_ENABLELEAKYBUCKETRATELIMITER: '{{if eq .suite "leaky-bucket" }}true{{else}}false{{end}}'
+      TYK_GW_ENABLETOKENBUCKETRATELIMITER: '{{if eq .suite "token-bucket" }}true{{else}}false{{end}}'
+      TYK_GW_ENABLEFIXEDWINDOWRATELIMITER: '{{if eq .suite "fixed-window" }}true{{else}}false{{end}}'
+      TYK_GW_ENABLESLIDINGWINDOWRATELIMITER: '{{if eq .suite "sliding-window" }}true{{else}}false{{end}}'
+      TYK_GW_ENABLESENTINELRATELIMITER: '{{if eq .suite "sentinel" }}true{{else}}false{{end}}'
+    vars:
+      testurl: http://localhost:8080/smoke-test-api/?arg=test
+    cmds:
+      - defer: docker compose down --remove-orphans
+      # https://github.com/moby/moby/issues/7710, can't use wildcards with docker (compose) cp
+      - defer: mv ./logs/tyk.*.prof ./logs/{{.suite}}-{{.timestamp}}.prof
+      - defer: mv ./logs/tyk.*.mprof ./logs/{{.suite}}-{{.timestamp}}.mprof
+      - defer: find -type f -size 0 -delete
+      - defer: docker compose exec gw bash -c 'tar -zcf - ./tyk.*.*prof' | tar -zxf - -C logs/
+      - defer: docker compose restart gw
+      - defer: docker compose stop httpbin
+      - docker compose pull -q --ignore-pull-failures
+      - docker compose up -d --remove-orphans --wait
+      - docker compose logs -t -f &
+      - hey -c {{.concurrency}} -z {{.duration}}s -q {{.rate}} -o csv "{{.testurl}}" > ./logs/{{.suite}}-{{.timestamp}}-hey.csv
+      - sleep 1
+
+#  token:
+#  fixed:
+#  rolling:
+#  sliding:

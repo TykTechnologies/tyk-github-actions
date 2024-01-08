@@ -1,0 +1,8 @@
+---
+version: "3"
+
+tasks:
+  default:
+    desc: "Clean assets"
+    cmds:
+      - rm -f *.json *.csv *prof
