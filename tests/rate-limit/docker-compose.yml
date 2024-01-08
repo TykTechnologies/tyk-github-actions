@@ -1,9 +1,12 @@
+# yamllint disable rule:line-length rule:colons
+---
+
 services:
   redis:
     image: redis:6-alpine
     command: redis-server --appendonly yes
     healthcheck:
-      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
       interval: 5s
       retries: 10
       start_period: 2s

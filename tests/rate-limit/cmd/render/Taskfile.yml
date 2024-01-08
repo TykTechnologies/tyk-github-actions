@@ -1,3 +1,4 @@
+# yamllint disable rule:line-length rule:braces
 ---
 version: "3"
 
@@ -22,4 +23,3 @@ tasks:
         cmd: go run . -t duration -f {{.source}}{{.kind}}-rate-in.json -p {{.duration}}s > output/{{.kind}}-latency.png
       - for: { var: limiters, as: kind }
         cmd: go run . -t count -f {{.source}}{{.kind}}-rate-out.json -p {{.duration}}s > output/{{.kind}}-requests.png
-
