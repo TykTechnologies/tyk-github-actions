@@ -18,7 +18,7 @@ services:
       - redis
     command: redis-cli -h redis monitor
 
-  gw:
+  gw1:
     image: ${GATEWAY_IMAGE}
     command:
       - '--memprofile'
@@ -38,6 +38,28 @@ services:
       TYK_GW_ENABLEFIXEDWINDOWRATELIMITER:   ${TYK_GW_ENABLEFIXEDWINDOWRATELIMITER:-false}
       TYK_GW_ENABLESLIDINGWINDOWRATELIMITER: ${TYK_GW_ENABLESLIDINGWINDOWRATELIMITER:-false}
       TYK_GW_ENABLESENTINELRATELIMITER:      ${TYK_GW_ENABLESENTINELRATELIMITER:-false}
+
+  gw2:
+    image: ${GATEWAY_IMAGE}
+    command:
+      - '--memprofile'
+      - '--cpuprofile'
+    depends_on:
+      - redis
+      - httpbin
+    volumes:
+      - ./data/:/opt/tyk-gateway/apps/
+    ports:
+      - "0.0.0.0:8081:8080"
+    environment:
+      TYK_DB_REDISHOST: redis
+      TYK_LOGLEVEL: error
+      TYK_GW_ENABLELEAKYBUCKETRATELIMITER:   ${TYK_GW_ENABLELEAKYBUCKETRATELIMITER:-false}
+      TYK_GW_ENABLETOKENBUCKETRATELIMITER:   ${TYK_GW_ENABLETOKENBUCKETRATELIMITER:-false}
+      TYK_GW_ENABLEFIXEDWINDOWRATELIMITER:   ${TYK_GW_ENABLEFIXEDWINDOWRATELIMITER:-false}
+      TYK_GW_ENABLESLIDINGWINDOWRATELIMITER: ${TYK_GW_ENABLESLIDINGWINDOWRATELIMITER:-false}
+      TYK_GW_ENABLESENTINELRATELIMITER:      ${TYK_GW_ENABLESENTINELRATELIMITER:-false}
+
 
   httpbin:
     image: tykio/ci-tools

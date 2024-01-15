@@ -116,6 +116,7 @@ tasks:
       - defer: docker compose stop httpbin
       - docker compose pull -q --ignore-pull-failures
       - docker compose up -d --remove-orphans --wait
+      - sleep 5
       - docker compose logs -t -f &
       - hey -c {{.concurrency}} -z {{.duration}}s -q {{.rate}} -o csv "{{.testurl}}" > ./logs/{{.suite}}-{{.timestamp}}-hey.csv
       - sleep 1
