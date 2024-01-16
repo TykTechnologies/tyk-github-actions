@@ -56,8 +56,7 @@ jobs:
           push: ${{ github.ref_name == 'main' || github.event_name == 'workflow_dispatch' }}
           pull: true
           load: ${{ github.ref_name != 'main' && github.event_name != 'workflow_dispatch' }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          no-cache: true
           context: docker/tools/${{ matrix.tag }}
           tags: tykio/ci-tools:${{ matrix.tag }}
 
