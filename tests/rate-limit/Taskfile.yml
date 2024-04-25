@@ -15,6 +15,7 @@ version: "3"
 vars:
   rate: 50
   duration: 10
+  config: limit-40
   concurrency: 1
   timestamp:
     sh: date +%s
@@ -25,6 +26,8 @@ env:
 tasks:
   default:
     desc: "Default"
+    vars:
+      output: '{{.config}}-rate-{{.rate}}-duration-{{.duration}}'
     cmds:
       - cd logs && task && cd -
       - task: drl
@@ -35,7 +38,8 @@ tasks:
       - task: sentinel
       - cd cmd/parse && task && cd -
       - cd cmd/render && task duration={{.duration}} && cd -
-      - mv cmd/render/output/* docs/redis/
+      - mkdir -p docs/{{.output}}
+      - mv cmd/render/output/* docs/{{ .output }}/
 
   token:
     desc: "Test token bucket rate limits"
@@ -98,6 +102,7 @@ tasks:
     env:
       timestamp: '{{.timestamp}}'
       suite: '{{.suite}}'
+      GATEWAY_CONFIG: '{{.config}}'
       TYK_GW_ENABLELEAKYBUCKETRATELIMITER: '{{if eq .suite "leaky-bucket" }}true{{else}}false{{end}}'
       TYK_GW_ENABLETOKENBUCKETRATELIMITER: '{{if eq .suite "token-bucket" }}true{{else}}false{{end}}'
       TYK_GW_ENABLEFIXEDWINDOWRATELIMITER: '{{if eq .suite "fixed-window" }}true{{else}}false{{end}}'

@@ -27,7 +27,7 @@ services:
       - redis
       - httpbin
     volumes:
-      - ./data/:/opt/tyk-gateway/apps/
+      - ./data/${GATEWAY_CONFIG}/:/opt/tyk-gateway/apps/
     ports:
       - "0.0.0.0:8080:8080"
     environment:
@@ -48,7 +48,7 @@ services:
       - redis
       - httpbin
     volumes:
-      - ./data/:/opt/tyk-gateway/apps/
+      - ./data/${GATEWAY_CONFIG}/:/opt/tyk-gateway/apps/
     ports:
       - "0.0.0.0:8081:8080"
     environment:
