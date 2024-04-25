@@ -41,6 +41,13 @@ tasks:
       - mkdir -p docs/{{.output}}
       - mv cmd/render/output/* docs/{{ .output }}/
 
+  stress:
+    desc: "Run stress tests"
+    cmds:
+      - task config=limit-40 rate=500
+      - task config=limit-50k rate=500
+      - task config=unlimited rate=500
+
   token:
     desc: "Test token bucket rate limits"
     vars:
