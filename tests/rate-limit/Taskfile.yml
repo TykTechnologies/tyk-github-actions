@@ -44,6 +44,9 @@ tasks:
   stress:
     desc: "Run stress tests"
     cmds:
+      - task config=limit-40 rate=50
+      - task config=limit-50k rate=50
+      - task config=unlimited rate=50
       - task config=limit-40 rate=500
       - task config=limit-50k rate=500
       - task config=unlimited rate=500
