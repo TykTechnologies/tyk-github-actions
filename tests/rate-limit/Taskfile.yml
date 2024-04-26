@@ -13,6 +13,7 @@ version: "3"
 # - The client-side request/response rates (using hey-hdr)
 
 vars:
+  tag: v5.4.0-alpha0
   rate: 50
   duration: 10
   config: limit-40
@@ -21,13 +22,13 @@ vars:
     sh: date +%s
 
 env:
-  GATEWAY_IMAGE: internal/tyk-gateway
+  GATEWAY_IMAGE: tykio/tyk-gateway:{{.tag}}
 
 tasks:
   default:
     desc: "Default"
     vars:
-      output: '{{.config}}-rate-{{.rate}}-duration-{{.duration}}'
+      output: '{{.tag}}-{{.config}}-rate-{{.rate}}-duration-{{.duration}}'
     cmds:
       - cd logs && task && cd -
       - task: drl
@@ -40,6 +41,11 @@ tasks:
       - cd cmd/render && task duration={{.duration}} && cd -
       - mkdir -p docs/{{.output}}
       - mv cmd/render/output/* docs/{{ .output }}/
+
+  pull:
+    desc: "Pull testing image"
+    cmds:
+      - docker pull $GATEWAY_IMAGE
 
   stress:
     desc: "Run stress tests"
