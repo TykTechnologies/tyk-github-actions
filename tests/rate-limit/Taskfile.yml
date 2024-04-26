@@ -13,7 +13,7 @@ version: "3"
 # - The client-side request/response rates (using hey-hdr)
 
 vars:
-  tag: v5.4.0-alpha0
+  tag: v5.4.0-alpha2
   rate: 50
   duration: 10
   config: limit-40
@@ -46,6 +46,11 @@ tasks:
     desc: "Pull testing image"
     cmds:
       - docker pull $GATEWAY_IMAGE
+
+  inspect:
+    desc: "Inspect docker image"
+    cmds:
+      - docker inspect $GATEWAY_IMAGE | jq .[0].Config.Labels
 
   stress:
     desc: "Run stress tests"
@@ -135,6 +140,7 @@ tasks:
       - defer: docker compose exec gw bash -c 'tar -zcf - ./tyk.*.*prof' | tar -zxf - -C logs/
       - defer: docker compose restart gw
       - defer: docker compose stop httpbin
+      - docker compose config
       - docker compose pull -q --ignore-pull-failures
       - docker compose up -d --remove-orphans --wait
       - sleep 5
