@@ -34,11 +34,12 @@ tasks:
     cmds:
       - cd logs && task && cd -
       - task: drl
+      - task: rrl
+      - task: sentinel
 #      - task: token
 #      - task: leaky
-      - task: fixed
 #      - task: sliding
-      - task: sentinel
+      - task: fixed
       - task: step:parse
       - task: step:render
 
@@ -55,6 +56,7 @@ tasks:
       - cd cmd/render && task duration={{.duration}} && cd -
       - mkdir -p docs/{{.output}}
       - mv cmd/render/output/* docs/{{ .output }}/
+      - find ./docs -size -100c -name '*.png' -delete
 
   pull:
     desc: "Pull testing image"
@@ -130,6 +132,15 @@ tasks:
         vars:
           suite: '{{.suite}}'
 
+  rrl:
+    desc: "Redis rolling rate limiter"
+    vars:
+      suite: 'rrl'
+    cmds:
+      - task: benchmark
+        vars:
+          suite: '{{.suite}}'
+
   benchmark:
     desc: "Run benchmarks with hey"
     required:
@@ -142,6 +153,7 @@ tasks:
       TYK_GW_ENABLETOKENBUCKETRATELIMITER: '{{if eq .suite "token-bucket" }}true{{else}}false{{end}}'
       TYK_GW_ENABLEFIXEDWINDOWRATELIMITER: '{{if eq .suite "fixed-window" }}true{{else}}false{{end}}'
       TYK_GW_ENABLESLIDINGWINDOWRATELIMITER: '{{if eq .suite "sliding-window" }}true{{else}}false{{end}}'
+      TYK_GW_ENABLEREDISROLLINGLIMITER: '{{if eq .suite "rrl" }}true{{else}}false{{end}}'
       TYK_GW_ENABLESENTINELRATELIMITER: '{{if eq .suite "sentinel" }}true{{else}}false{{end}}'
     vars:
       testurl: http://localhost:8080/smoke-test-api/?arg=test
@@ -160,4 +172,6 @@ tasks:
       - sleep 5
       - docker compose logs -t -f &
       - hey -c {{.concurrency}} -z {{.duration}}s -q {{.rate}} -o csv "{{.testurl}}" > ./logs/{{.suite}}-{{.timestamp}}-hey.csv
+      - docker compose exec redis redis-cli info > ./logs/{{.suite}}-{{.timestamp}}-redis-info.txt
+      - docker compose exec redis redis-cli keys '*' > ./logs/{{.suite}}-{{.timestamp}}-redis-keys.txt
       - sleep 1

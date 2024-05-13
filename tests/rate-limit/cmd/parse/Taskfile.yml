@@ -3,7 +3,7 @@
 version: "3"
 
 vars:
-  limiters: 'drl fixed-window sliding-window leaky-bucket token-bucket sentinel'
+  limiters: 'drl rrl sentinel fixed-window sliding-window leaky-bucket token-bucket'
 
 tasks:
   default:

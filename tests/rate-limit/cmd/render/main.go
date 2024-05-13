@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"time"
 
 	"github.com/wcharczuk/go-chart/v2"
@@ -22,18 +23,28 @@ type Record struct {
 }
 
 func main() {
-	var filename, metric string
+	if err := start(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
+
+func start() error {
+	var filename, output, metric string
 	var padding time.Duration
+	var printInfo bool
+
 	flag.StringVar(&filename, "f", "", "Filename to open")
+	flag.StringVar(&output, "o", "", "Output filename")
 	flag.StringVar(&metric, "t", "rate", "Render metric (rate, count, duration)")
+	flag.BoolVar(&printInfo, "info", false, "Print request info")
 	flag.DurationVar(&padding, "p", padding, "Time padding (total duration)")
 	flag.Parse()
 
 	// Read JSON data from the file
 	jsonData, err := readJSONFile(filename, padding, metric)
 	if err != nil {
-		fmt.Println("Error reading JSON file:", err)
-		os.Exit(1)
+		return fmt.Errorf("error reading input file %s: %w", filename, err)
 	}
 
 	// Extract offset values and calculate seconds
@@ -80,11 +91,23 @@ func main() {
 		graph.Series = graph.Series[0:1]
 	}
 
-	// Save the chart as a PNG file
-	err = graph.Render(chart.PNG, os.Stdout)
+	f, err := os.Create(output)
 	if err != nil {
-		fmt.Println("Error rendering chart:", err)
+		return fmt.Errorf("Error creating output file %s: %w", output, err)
 	}
+	defer f.Close()
+
+	// Save the chart as a PNG file
+	err = graph.Render(chart.PNG, f)
+	if err != nil {
+		return fmt.Errorf("Error rendering chart: %w", err)
+	}
+
+	if printInfo {
+		printStats(path.Base(output), jsonData)
+	}
+
+	return nil
 }
 
 func seriesName(metric string) string {
@@ -145,4 +168,20 @@ func getYValues(data []Record, status int, metric string) []float64 {
 		}
 	}
 	return yValues
+}
+
+// printStats prints the request counts and average latency
+func printStats(output string, data []Record) {
+	var requestLog []float64
+	var total float64
+	for _, record := range data {
+		var duration = float64(record.Duration.Milliseconds())
+
+		requestLog = append(requestLog, duration)
+		total += duration
+	}
+
+	perc := Percentile(requestLog, 95)
+
+	fmt.Printf("[INFO] file %s, requests %d, 95th percentile latency %.4f ms, total latency %f ms\n", output[:len(output)-4], len(data), perc, total)
 }
