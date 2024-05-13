@@ -20,3 +20,10 @@
 ![latency](./drl-latency.png)
 ![outgoing rate](./drl-rate-out.png)
 ![requests](./drl-requests.png)
+
+## RRL (redis rolling rate limiter)
+
+![incoming rate](./rrl-rate-in.png)
+![latency](./rrl-latency.png)
+![outgoing rate](./rrl-rate-out.png)
+![requests](./rrl-requests.png)
