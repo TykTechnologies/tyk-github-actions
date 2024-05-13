@@ -13,7 +13,8 @@ version: "3"
 # - The client-side request/response rates (using hey-hdr)
 
 vars:
-  tag: v5.4.0-alpha2
+#  tag: v5.4.0-alpha2
+  tag: dev
   rate: 50
   duration: 10
   config: limit-40
@@ -22,7 +23,8 @@ vars:
     sh: date +%s
 
 env:
-  GATEWAY_IMAGE: tykio/tyk-gateway:{{.tag}}
+  GATEWAY_IMAGE: internal/tyk-gateway
+  GATEWAY_IMAGE_PROD: tykio/tyk-gateway:{{.tag}}
 
 tasks:
   default:
@@ -32,12 +34,24 @@ tasks:
     cmds:
       - cd logs && task && cd -
       - task: drl
-      - task: token
-      - task: leaky
+#      - task: token
+#      - task: leaky
       - task: fixed
-      - task: sliding
+#      - task: sliding
       - task: sentinel
+      - task: step:parse
+      - task: step:render
+
+  step:parse:
+    desc: "Parse benchmark logs"
+    cmds:
       - cd cmd/parse && task && cd -
+
+  step:render:
+    desc: "Render benchmark outputs"
+    vars:
+      output: '{{.tag}}-{{.config}}-rate-{{.rate}}-duration-{{.duration}}'
+    cmds:
       - cd cmd/render && task duration={{.duration}} && cd -
       - mkdir -p docs/{{.output}}
       - mv cmd/render/output/* docs/{{ .output }}/
@@ -147,8 +161,3 @@ tasks:
       - docker compose logs -t -f &
       - hey -c {{.concurrency}} -z {{.duration}}s -q {{.rate}} -o csv "{{.testurl}}" > ./logs/{{.suite}}-{{.timestamp}}-hey.csv
       - sleep 1
-
-#  token:
-#  fixed:
-#  rolling:
-#  sliding:

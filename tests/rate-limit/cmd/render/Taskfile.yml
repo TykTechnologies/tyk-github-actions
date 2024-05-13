@@ -19,7 +19,10 @@ tasks:
       - goimports -w .
       - for: { var: outputs, as: output }
         cmd: go run . -t rate -f {{.source}}{{.output}} -p {{.duration}}s > output/{{.output | replace ".json" ".png"}}
+        ignore_error: true
       - for: { var: limiters, as: kind }
         cmd: go run . -t duration -f {{.source}}{{.kind}}-rate-in.json -p {{.duration}}s > output/{{.kind}}-latency.png
+        ignore_error: true
       - for: { var: limiters, as: kind }
         cmd: go run . -t count -f {{.source}}{{.kind}}-rate-out.json -p {{.duration}}s > output/{{.kind}}-requests.png
+        ignore_error: true
