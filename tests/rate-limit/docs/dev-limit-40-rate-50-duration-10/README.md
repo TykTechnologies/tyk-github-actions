@@ -27,6 +27,22 @@ will require a substantially large resource allocation to process rate limit com
 The commands in use have large big-O complexity, so the main impact seems to be CPU
 oriented for ZRANGE/ZCARD/ZADD commands and network oriented (number of commands).
 
+## Request latencies
+
+| Rate Limiter  | Count | Mean | P50   | P95   | P99   | P999  | P9999 | P99999 |
+| ------------- | ----- | ---- | ----- | ----- | ----- | ----- | ----- | ------- |
+| DRL           | 4997  | 231µs | 200µs | 400µs | 400µs | 800µs | 8.2ms | 8.2ms   |
+| RRL           | 5000  | 391µs | 400µs | 600µs | 700µs | 1.2ms | 2ms   | 2.3ms   |
+| Sentinel      | 4997  | 336µs | 300µs | 600µs | 700µs | 1ms   | 4ms   | 4ms     |
+| Fixed-window  | 4998  | 346µs | 300µs | 600µs | 600µs | 900µs | 2.5ms | 2.5ms   |
+
+Excluding DRL as it does not use Redis, the Sentinel rate limiter shows
+the lowest mean latency at 336µs, indicating it has the fastest average
+processing time among the remaining rate limiters.
+
+The Fixed-window rate limiter follows closely with a mean latency of
+346µs and a faster 99th percentile latency, and significantly less redis load.
+
 ## Fixed window
 
 ![incoming rate](./fixed-window-rate-in.png)
