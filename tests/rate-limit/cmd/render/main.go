@@ -162,7 +162,7 @@ func getYValues(data []Record, status int, metric string) []float64 {
 				yValues = append(yValues, float64(0))
 			}
 		case "duration":
-			yValues = append(yValues, float64(record.Duration.Milliseconds()))
+			yValues = append(yValues, 1000*float64(record.Duration.Seconds()))
 		case "count":
 			yValues = append(yValues, float64(record.Count))
 		}
