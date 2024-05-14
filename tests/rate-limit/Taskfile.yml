@@ -172,6 +172,6 @@ tasks:
       - sleep 5
       - docker compose logs -t -f &
       - hey -c {{.concurrency}} -z {{.duration}}s -q {{.rate}} -o csv "{{.testurl}}" > ./logs/{{.suite}}-{{.timestamp}}-hey.csv
-      - docker compose exec redis redis-cli info > ./logs/{{.suite}}-{{.timestamp}}-redis-info.txt
+      - docker compose exec redis redis-cli info all > ./logs/{{.suite}}-{{.timestamp}}-redis-info.txt
       - docker compose exec redis redis-cli keys '*' > ./logs/{{.suite}}-{{.timestamp}}-redis-keys.txt
       - sleep 1
