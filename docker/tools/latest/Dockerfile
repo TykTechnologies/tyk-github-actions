@@ -7,6 +7,7 @@ WORKDIR /usr/local/bin
 
 RUN --mount=type=cache,mode=0755,target=/go/pkg/mod go install github.com/TykTechnologies/exp/cmd/httpbin-logserver@main
 RUN --mount=type=cache,mode=0755,target=/go/pkg/mod go install github.com/TykTechnologies/exp/cmd/schema-gen@main
+RUN --mount=type=cache,mode=0755,target=/go/pkg/mod go install github.com/TykTechnologies/exp/cmd/summary@main
 RUN --mount=type=cache,mode=0755,target=/go/pkg/mod go install github.com/TykTechnologies/exp/cmd/go-fsck@main
 RUN --mount=type=cache,mode=0755,target=/go/pkg/mod go install github.com/golang/mock/mockgen@v1.6.0
 RUN --mount=type=cache,mode=0755,target=/go/pkg/mod go install golang.org/x/tools/cmd/goimports@latest
