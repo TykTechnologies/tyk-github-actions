@@ -13,7 +13,7 @@ version: "3"
 # - The client-side request/response rates (using hey-hdr)
 
 vars:
-#  tag: v5.4.0-alpha2
+  # tag: v5.4.0-alpha2
   tag: dev
   rate: 50
   duration: 10
@@ -35,10 +35,11 @@ tasks:
       - cd logs && task && cd -
       - task: drl
       - task: rrl
+      - task: rrl-smooth
       - task: sentinel
-#      - task: token
-#      - task: leaky
-#      - task: sliding
+      # - task: token
+      # - task: leaky
+      # - task: sliding
       - task: fixed
       - task: step:parse
       - task: step:render
@@ -78,6 +79,27 @@ tasks:
       - task config=limit-50k rate=500
       - task config=unlimited rate=500
 
+  rrl:smoothing:
+    desc: "Redis rolling rate limiter (smoothed)"
+    vars:
+      suite: 'rrl'
+    cmds:
+      - task: benchmark
+        vars:
+          suite: '{{.suite}}'
+          smoothing: 'true'
+
+  rrl:default:
+    desc: "Redis rolling rate limiter"
+    vars:
+      suite: 'rrl'
+    cmds:
+      - task: benchmark
+        vars:
+          suite: '{{.suite}}'
+          smoothing: 'false'
+
+
   token:
     desc: "Test token bucket rate limits"
     vars:
@@ -86,6 +108,7 @@ tasks:
       - task: benchmark
         vars:
           suite: '{{.suite}}'
+          smoothing: 'false'
 
   fixed:
     desc: "Test fixed window rate limits"
@@ -95,6 +118,7 @@ tasks:
       - task: benchmark
         vars:
           suite: '{{.suite}}'
+          smoothing: 'false'
 
   sliding:
     desc: "Test sliding window rate limits"
@@ -104,6 +128,7 @@ tasks:
       - task: benchmark
         vars:
           suite: '{{.suite}}'
+          smoothing: 'false'
 
   sentinel:
     desc: "Test Sentinel redis rate limits"
@@ -113,6 +138,7 @@ tasks:
       - task: benchmark
         vars:
           suite: '{{.suite}}'
+          smoothing: 'false'
 
   leaky:
     desc: "Test Leaky Bucket rate limits"
@@ -122,6 +148,7 @@ tasks:
       - task: benchmark
         vars:
           suite: '{{.suite}}'
+          smoothing: 'false'
 
   drl:
     desc: "Test DRL rate limits"
@@ -131,20 +158,13 @@ tasks:
       - task: benchmark
         vars:
           suite: '{{.suite}}'
-
-  rrl:
-    desc: "Redis rolling rate limiter"
-    vars:
-      suite: 'rrl'
-    cmds:
-      - task: benchmark
-        vars:
-          suite: '{{.suite}}'
+          smoothing: 'false'
 
   benchmark:
     desc: "Run benchmarks with hey"
     required:
       - suite
+      - smoothing
     env:
       timestamp: '{{.timestamp}}'
       suite: '{{.suite}}'
@@ -155,6 +175,7 @@ tasks:
       TYK_GW_ENABLESLIDINGWINDOWRATELIMITER: '{{if eq .suite "sliding-window" }}true{{else}}false{{end}}'
       TYK_GW_ENABLEREDISROLLINGLIMITER: '{{if eq .suite "rrl" }}true{{else}}false{{end}}'
       TYK_GW_ENABLESENTINELRATELIMITER: '{{if eq .suite "sentinel" }}true{{else}}false{{end}}'
+      TYK_GW_ENABLESRATELIMITSMOOTHING: '{{.smoothing}}'
     vars:
       testurl: http://localhost:8080/smoke-test-api/?arg=test
     cmds:
