@@ -8,6 +8,7 @@ name: Docker - CI tools
 
 on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
+    types: ['exp-cmd']
   pull_request:
     paths:
       - 'docker/tools/**'
